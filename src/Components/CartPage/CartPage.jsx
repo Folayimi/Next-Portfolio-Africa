@@ -1,0 +1,166 @@
+import React, { useEffect, useState } from "react";
+import { Background } from "./CartPageStyle";
+import { X } from "heroicons-react";
+import { useRouter } from "next/router";
+import Image from "next/image";
+
+const CartPage = (props) => {
+  const router = useRouter();
+  const {    
+    setAddCart,
+    cartItems,
+    setCartItems,
+    total,
+    setTotal,
+    top,
+    scrollToRef,
+    setSize,
+  } = props;
+  const [changed, setChanged] = useState(false);
+  const [close, setClose] = useState(false);
+
+  useEffect(() => {
+    setCartItems(cartItems);
+  }, [changed]);
+
+  useEffect(() => {
+    if (close === true) {
+      setAddCart(false);
+      setClose(false);
+    }
+  }, [close]);
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      setClose(true);
+      scrollToRef(top);
+      setSize(0);
+    }
+  }, [cartItems]);
+
+  const increment = (id) => {
+    cartItems.forEach((element) => {
+      if (element.id == id) {
+        element.number += 1;
+      }
+    });
+    setChanged(!changed);
+  };
+
+  const decrement = (id) => {
+    cartItems.forEach((element) => {
+      if (element.id == id) {
+        element.number -= 1;
+      }
+    });
+    setChanged(!changed);
+  };
+  return (
+    <>
+      <Background>
+        <div
+          className="closeCart"
+          onClick={() => {
+            console.log("close");
+            setClose(true);
+            scrollToRef(top);
+            setSize(0);
+          }}
+        />
+        <div className="cartCont">
+          <div className="head">
+            <h4>Your Cart {cartItems.length} item(s) </h4>
+            <p
+              onClick={() => {
+                setClose(true);
+                scrollToRef(top);
+                setSize(0);
+              }}
+            >
+              Cancel
+            </p>
+          </div>
+          <div className="cartItems">
+            {cartItems.map((item, i) => {
+              if (item.number < 1) {
+                setCartItems((cartItems) => {
+                  return cartItems.filter((Item) => Item.id !== item.id);
+                });
+              }
+              return (
+                <>
+                  <div className="cartItem" key={i}>
+                    <div className="leftSection">
+                      <div className="imageCont">                        
+                        <Image src={item.img} alt="image"/>
+                      </div>
+                      <div className="description">
+                        <div>
+                          <h4>{item.name}</h4>
+                          <p>
+                            Size {item.size} {item.color}
+                          </p>
+                        </div>
+                        <div className="count">
+                          <h2
+                            onClick={() => {
+                              decrement(item.id);
+                              setTotal(total - parseInt(item.price));
+                            }}
+                          >
+                            -
+                          </h2>
+                          <h2>{item.number}</h2>
+                          <h2
+                            onClick={() => {
+                              increment(item.id);
+                              setTotal(total + parseInt(item.price));
+                            }}
+                          >
+                            +
+                          </h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rightSection">
+                      <div
+                        className="close"
+                        onClick={() => {
+                          setTotal(total - parseInt(item.price * item.number));
+                          setCartItems((cartItems) => {
+                            return cartItems.filter(
+                              (Item) => Item.id !== item.id
+                            );
+                          });
+                        }}
+                      >
+                        <X size="13px" />
+                      </div>
+                      <p>{item.price}</p>
+                    </div>
+                  </div>
+                </>
+              );
+            })}
+          </div>
+          <div className="section">
+            <h3>Total</h3>
+            <h3>{total}</h3>
+          </div>
+          <div
+            className="checkOut"
+            onClick={() => {
+              router.push("/products/payment");
+              localStorage.setItem("cartItems", JSON.stringify(cartItems));
+              localStorage.setItem("total", total);
+            }}
+          >
+            CheckOut
+          </div>
+        </div>
+      </Background>
+    </>
+  );
+};
+
+export default CartPage;
