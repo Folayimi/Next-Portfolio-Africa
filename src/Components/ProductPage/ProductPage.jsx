@@ -13,8 +13,8 @@ const ProductPage = ({ Id }) => {
   const router = useRouter();
   const selectedProduct = ProductData.find(
     (items) => items.id === parseInt(Id)
-  );
-  const [color, setColor] = useState(selectedProduct.colorType[0].color);
+  );  
+  const [color, setColor] = useState(selectedProduct?.colorType[0].color);  
   const [size, setSize] = useState(0);
   const [total, setTotal] = useState(0);
   const [addCart, setAddCart] = useState(false);
@@ -26,7 +26,7 @@ const ProductPage = ({ Id }) => {
 
   useEffect(() => {
     scrollToRef(top);
-    if (localStorage.length === 0) {
+    if (!localStorage.cartItems || !localStorage.total) {
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
       localStorage.setItem("total", total);
     } else {
@@ -59,7 +59,7 @@ const ProductPage = ({ Id }) => {
           </div>
           <div className="productView">
             <div className="leftSection">
-              {selectedProduct.colorType.map((item, i) => {
+              {selectedProduct?.colorType.map((item, i) => {
                 {
                   if (item.color == color) {
                     return (
@@ -98,7 +98,7 @@ const ProductPage = ({ Id }) => {
           <div className="reviewCont">
             <p className="head">Reviews</p>
             <div className="reviews">
-              {selectedProduct.reviews.map((items, i) => {
+              {selectedProduct?.reviews.map((items, i) => {
                 if (moreR === false && i < 3) {
                   return (
                     <>
@@ -139,7 +139,7 @@ const ProductPage = ({ Id }) => {
                   );
                 }
               })}
-              {selectedProduct.reviews.length > 3 && moreR === false ? (
+              {selectedProduct?.reviews.length > 3 && moreR === false ? (
                 <div
                   className="moreR"
                   onClick={() => {
@@ -225,16 +225,16 @@ const ProductDetail = ({
   return (
     <>
       <div className="section">
-        <h3>{selectedProduct.name}</h3>
-        <h2>N {selectedProduct.price}</h2>
+        <h3>{selectedProduct?.name}</h3>
+        <h2>N {selectedProduct?.price}</h2>
       </div>
       <div className="section">
-        <p>{selectedProduct.description}</p>
+        <p>{selectedProduct?.description}</p>
       </div>
       <div className="section">
         <p className="bold">Colors</p>
         <div className="colorCnt">
-          {selectedProduct.colorType.map((items, i) => {
+          {selectedProduct?.colorType.map((items, i) => {
             return (
               <>
                 <div
@@ -258,7 +258,7 @@ const ProductDetail = ({
         </div>
         <div className="sizes">
           <div className="sizesCont">
-            {selectedProduct.sizes.map((items, i) => {
+            {selectedProduct?.sizes.map((items, i) => {
               return (
                 <>
                   <div
@@ -280,13 +280,13 @@ const ProductDetail = ({
         <div
           className="addToCart"
           onClick={() => {
-            for (var i = 0; i < selectedProduct.colorType.length; i++) {
-              if (selectedProduct.colorType[i].color === color && size !== 0) {
+            for (var i = 0; i < selectedProduct?.colorType.length; i++) {
+              if (selectedProduct?.colorType[i].color === color && size !== 0) {
                 const newCart = cartItems.find(
                   (item) =>
                     item.color === color &&
-                    item.price === selectedProduct.price &&
-                    item.name === selectedProduct.name &&
+                    item.price === selectedProduct?.price &&
+                    item.name === selectedProduct?.name &&
                     item.size === size
                 );
 
@@ -299,16 +299,16 @@ const ProductDetail = ({
                       id: new Date().getTime(),
                       color: color,
                       number: 1,
-                      img: selectedProduct.colorType[i].images[0].img,
-                      price: selectedProduct.price,
-                      name: selectedProduct.name,
+                      img: selectedProduct?.colorType[i].images[0].img,
+                      price: selectedProduct?.price,
+                      name: selectedProduct?.name,
                       size: size,
                     },
                   ]);
                 }
               }
               if (size !== 0) {
-                setTotal(total + parseInt(selectedProduct.price));
+                setTotal(total + parseInt(selectedProduct?.price));
                 localStorage.setItem("cartItems", JSON.stringify(cartItems));
                 localStorage.setItem("total", total);
                 setError(false);
@@ -343,8 +343,8 @@ const ProductDetail = ({
         <hr width="100%" />
       </div>
       <div className="section">
-        {content === "description" && <p>{selectedProduct.Pdescription}</p>}
-        {content === "materials" && <p>{selectedProduct.material}</p>}
+        {content === "description" && <p>{selectedProduct?.Pdescription}</p>}
+        {content === "materials" && <p>{selectedProduct?.material}</p>}
       </div>
     </>
   );

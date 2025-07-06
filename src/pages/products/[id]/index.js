@@ -5,6 +5,7 @@ export default function ProductCont() {
     const router = useRouter();
 
     const Id = router.query.id
+    console.log(Id)
 
   return (
     <>
