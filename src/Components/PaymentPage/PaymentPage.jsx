@@ -7,13 +7,11 @@ import Image from "next/image";
 
 const scrollToRef = (ref) => window.scrollTo(0, ref.current.offsetTop);
 
-const PaymentPage = () => {  
+const PaymentPage = () => {
   const router = useRouter();
   const top = useRef(null);
-  const [cartItems, setCartItems] = useState(
-    JSON.parse(localStorage.cartItems)
-  );
-  const [total, setTotal] = useState(JSON.parse(localStorage.total));
+  const [cartItems, setCartItems] = useState([]);
+  const [total, setTotal] = useState(0);
   const [changing, setChanging] = useState(false);
   const [userDetails, setUserDetails] = useState({
     firstName: "",
@@ -43,6 +41,8 @@ const PaymentPage = () => {
   ];
   useEffect(() => {
     scrollToRef(top);
+    setCartItems(JSON.parse(localStorage.cartItems));
+    setTotal(JSON.parse(localStorage.total));
   }, []);
   const handleChange = (e) => {
     const name = e.target.name;
@@ -54,7 +54,7 @@ const PaymentPage = () => {
     <>
       <Pbackground ref={top}>
         <div className="PCont">
-          <div className="Phead" onClick={()=> router.back()}>            
+          <div className="Phead" onClick={() => router.back()}>
             <ChevronLeft size="20px" />
             <h4>Payment</h4>
           </div>
@@ -162,7 +162,7 @@ const PaymentPage = () => {
                       <div className="cartItem" key={i}>
                         <div className="leftSection">
                           <div className="imageCont">
-                            <Image src={item.img} alt="image" />                            
+                            <Image src={item.img} alt="image" />
                             <div className="number">
                               <p>{item.number}</p>
                             </div>
